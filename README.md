@@ -1,48 +1,50 @@
 # Gravity conditioning and rollout training in SG-JEPA
 
-This experiment separates two parts of Semigroup-JEPA (SG-JEPA):
+This repository contains the runnable SG-JEPA code, the four-cell factorial
+experiment, the analysis data, and the figures for the result.
 
-1. Supplying the episode's physical parameter, gravity, as an action input.
-2. Training the predictor on its own five-step latent rollouts.
+The experiment asks one question: does SG-JEPA benefit from receiving gravity,
+from training on multi-step rollouts, or from the combination?
 
-The result supports a narrow conclusion: in this setup, the gravity input did
-not help by itself. Its benefit appeared when rollout training gave the model a
-reason to use it.
+## Result
 
-## Question
+In this setup, gravity conditioning did not help under one-step training. It
+helped when rollout training made the physical parameter useful for repeated
+prediction.
 
-Does SG-JEPA improve because it receives gravity, because it trains on
-multi-step predictions, or because the two changes work together?
+![Autoregressive error across horizons](figures/autoregressive-error.svg)
+
+At horizon 20, rollout training reduced normalized target MSE by 69% and
+position error by 73% with the correct gravity input. With constant gravity,
+the same change reduced those errors by 6% and 4%.
+
+![Horizon-20 rollout effect and interaction](figures/horizon-20-effects.svg)
+
+The result supports a narrow conclusion. A physical parameter can be present
+in the action input without shaping the representation. Repeated prediction
+creates pressure to preserve the parameter when it changes the dynamics.
 
 ## Factorial design
 
-All four cells use the same ViT-Tiny encoder, GRU predictor, optimizer, data
-split, 20-epoch schedule, and Square evaluation cohort. Each cell has one
-world-model training seed, `42`. Each checkpoint has five probe and evaluation
-seeds, `42` through `46`.
+All cells use the same ViT-Tiny encoder, GRU predictor, optimizer, data split,
+and 20-epoch schedule.
 
-| Cell | Gravity input | Training objective |
+| Cell | Gravity input | World-model objective |
 | --- | --- | --- |
 | `correct_onestep` | True normalized episode gravity | One-step prediction |
 | `constant_onestep` | Normalized training mean, `0` | One-step prediction |
 | `correct_rollout` | True normalized episode gravity | Five-step autoregressive rollout |
 | `constant_rollout` | Normalized training mean, `0` | Five-step autoregressive rollout |
 
-The constant condition uses the same zeroed gravity input during training and
-evaluation. The correct condition receives the true gravity value in both
-phases.
+Each cell has one world-model training seed, `42`. Each checkpoint has five
+probe and evaluation seeds, `42` through `46`. The rollout cells replace the
+one-step objective. They set `prediction_weight: 0.0` and
+`rollout_weight: 1.0`, so this run does not test an additive rollout loss.
 
-The rollout cells replace the one-step objective. Their configs set
-`prediction_weight: 0.0` and `rollout_weight: 1.0`. This experiment therefore
-tests one-step-only training against rollout-only training. It does not test
-whether adding a rollout term to a one-step loss is better.
+## Evaluation
 
-## Results
-
-The evaluation uses the model's autoregressive `predicted` trajectories. Each
-cell evaluates 5,000 episodes from the same fixed test manifest. Values below
-are means across the five evaluation seeds. Lower is better. Each entry is
-`normalized target MSE / position L2`.
+The figures use the means across five evaluation seeds and 5,000 episodes from
+one fixed test manifest. Lower is better.
 
 | Horizon | Correct, one-step | Constant, one-step | Correct, rollout | Constant, rollout |
 | ---: | ---: | ---: | ---: | ---: |
@@ -51,80 +53,95 @@ are means across the five evaluation seeds. Lower is better. Each entry is
 | 20 | 1.076 / 2.734 | 0.677 / 1.593 | 0.331 / 0.743 | 0.637 / 1.530 |
 | 44 | 1.402 / 2.559 | 1.434 / 2.154 | 0.922 / 1.086 | 1.388 / 2.036 |
 
-At horizon 20, rollout training reduces normalized MSE by 69% and position
-error by 73% in the correct-gravity cell. In the constant-gravity cell, the
-same change reduces those errors by only 6% and 4%.
+Each entry is `normalized target MSE / position L2`.
 
-The interaction is large. At horizon 20, the rollout effect in the
-correct-gravity cell minus the rollout effect in the constant-gravity cell is
-`-0.705` normalized MSE and `-1.929` position L2. Negative values mean that
-rollout training helps more when the model receives the correct gravity.
-
-Gravity conditioning alone does not produce a consistent gain. At horizons 1
-and 5, `correct_onestep` is worse than `constant_onestep` on both metrics. At
-horizon 44, correct gravity gives slightly lower MSE but higher position error
-under one-step training. The gain is not a general one-step effect.
-
-The probe results point in the same direction. Mean best validation MSE is
-`0.01383` for `correct_onestep`, `0.01358` for `constant_onestep`, `0.01234`
-for `correct_rollout`, and `0.01253` for `constant_rollout`. Rollout-trained
-representations decode state slightly better, while grounding alone does not.
+The evaluation compares free autoregressive predictions with an oracle probe
+baseline. The oracle rows use ground-truth trajectories. They are not
+teacher-forced model predictions.
 
 ## Interpretation
 
-A one-step objective can fit local transitions without making the predictor
-use gravity. The visual history already contains much of the current state, so
-the model can take a shortcut and predict an average local change.
+A one-step objective can fit local transitions while ignoring gravity. The
+visual history already exposes much of the current state, so the predictor can
+use an average local change.
 
-Rollout training changes the pressure. The predictor must feed its own latent
-back into the next step. If it ignores a gravity value that changes the
-dynamics, the error compounds across the rollout. When the gravity input is
-constant, the model has no evidence that it must represent a family of
-dynamics. It can learn a more stable predictor for one average regime, but it
-cannot use gravity to distinguish regimes.
+Rollout training changes the failure mode. The predictor feeds its own latent
+back into the next step. If it ignores gravity while gravity changes the
+dynamics, error compounds across the rollout. Constant gravity does not expose
+a family of dynamics, so it cannot teach the model to use gravity to distinguish
+those regimes.
 
-This matches the explanation in [Semigroup-JEPA](https://arxiv.org/abs/2609.10464):
-the paper reports a small teacher-forced gap, a much larger free-rollout gap,
-and higher rollout error when it supplies incorrect gravity. Those results do
-not isolate the two factors, but they are consistent with rollout training
-making gravity operationally useful.
+This result agrees with the mechanism proposed by
+[Semigroup-JEPA](https://arxiv.org/abs/2609.10464). The paper reports a small
+teacher-forced gap, a larger free-rollout gap, and higher rollout error under
+incorrect gravity. Those results do not isolate the two factors. This
+experiment does.
 
-## Limits
+## Limits and follow-ups
 
-- Each factorial cell has one world-model training seed. The five downstream
-  seeds measure probe and evaluation variability, not training variability.
-- The current evaluation compares free autoregressive predictions with an
-  oracle probe baseline. Its `oracle` rows are ground-truth trajectories, not
-  teacher-forced model predictions.
-- The rollout cells replace one-step training instead of adding rollout loss
-  to it. An additive-loss ablation remains open.
-- The experiment uses one simulated task and one scalar physical parameter.
+- Each cell has one world-model training seed. The five downstream seeds do not
+  measure training variance.
+- The rollout objective replaces the one-step objective. An additive-loss
+  ablation remains open.
+- The task uses one simulated environment and one scalar physical parameter.
+- The evaluation still needs a teacher-forced model-prediction comparison.
 
-## Follow-up tests
+Useful follow-ups are true, zeroed, shuffled, and wrong-gravity evaluation;
+teacher-forced prediction; additive one-step plus rollout loss; and multiple
+world-model training seeds.
 
-1. Evaluate every checkpoint with true, zeroed, shuffled, and deliberately
-   wrong gravity inputs. A correct-rollout model should degrade when gravity is
-   wrong if it has learned to use the parameter.
-2. Add a teacher-forced model evaluation. If the advantage appears only in free
-   rollouts, it is a stability and consistency effect. If it appears under
-   teacher forcing too, it also improves local state prediction.
-3. Train additive-loss cells with both one-step and rollout terms, while
-   matching optimizer steps and total compute.
-4. Repeat all four training cells with several world-model seeds.
+## Reproduce
 
-## Reproduction
+The repository includes the upstream SG-JEPA source with the experiment
+changes applied. The experiment entrypoints are in
+`experiments/gravity_rollout_factorial/`.
 
-The source patch for the upstream SG-JEPA checkout is
-[`upstream.patch`](upstream.patch). It adds the four configs, gravity
-conditioning, rollout training, Slurm entry points, probe fitting, and
-evaluation.
+Install the upstream environment, generate a Square dataset, and set these
+paths to locations available on your machine:
 
-The completed outputs were stored on Nexus under:
-
-```text
-/cmlscratch/ssoni11/sg-jepa-factorial/output/
+```bash
+uv sync --extra data --extra hub
+export SGJEPA_ROOT="$PWD"
+export SGJEPA_PYTHON="$SGJEPA_ROOT/.venv-paper/bin/python"
+export SGJEPA_DATASET="/path/to/square-dataset"
+export SGJEPA_OUTPUT="/path/to/experiment-output"
 ```
 
-The run used 20 training epochs, one world-model seed per cell, five probe
-seeds per checkpoint, five evaluation seeds per checkpoint, and 5,000 test
-episodes per evaluation.
+Generate and verify the dataset:
+
+```bash
+"$SGJEPA_PYTHON" -m data_generation.generate \
+  --recipe data_generation/recipes/main_text.yaml \
+  --task square \
+  --split all \
+  --output "$SGJEPA_DATASET"
+"$SGJEPA_PYTHON" scripts/verify_examples.py data \
+  --path "$SGJEPA_DATASET" \
+  --task square \
+  --episodes 48000 \
+  --train-episodes 8000 \
+  --test-episodes 40000
+```
+
+The Slurm job files keep site-specific settings out of the repository. Use
+`experiments/gravity_rollout_factorial/slurm/submit.sh` to pass your partition,
+QoS, and GPU resource through environment variables.
+
+The committed `upstream.patch` records the experiment diff against the
+official SG-JEPA release. You do not need to apply it to run this checkout.
+
+## Repository layout
+
+- `sg_jepa/`, `train.py`, and the surrounding files are the runnable SG-JEPA
+  source.
+- `configs/train/square_factorial_*.yaml` define the four factorial cells.
+- `experiments/gravity_rollout_factorial/slurm/` contains data, training,
+  probe, evaluation, and generic submission entrypoints.
+- `analysis/results.csv` contains the plotted summary values.
+- `analysis/plot_results.py` regenerates the figures.
+- `figures/` contains the SVG figures embedded above.
+- `upstream.patch` records the experiment changes relative to the upstream
+  source.
+
+The upstream source is [sg-jepa/sg-jepa](https://github.com/sg-jepa/sg-jepa).
+Its license and third-party notices remain in this repository.

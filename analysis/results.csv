@@ -1,0 +1,17 @@
+horizon,gravity_condition,training_objective,target_mse,position_l2
+1,correct,onestep,0.155,0.277
+1,constant,onestep,0.041,0.164
+1,correct,rollout,0.051,0.186
+1,constant,rollout,0.050,0.174
+5,correct,onestep,0.824,1.180
+5,constant,onestep,0.120,0.342
+5,correct,rollout,0.108,0.349
+5,constant,rollout,0.133,0.356
+20,correct,onestep,1.076,2.734
+20,constant,onestep,0.677,1.593
+20,correct,rollout,0.331,0.743
+20,constant,rollout,0.637,1.530
+44,correct,onestep,1.402,2.559
+44,constant,onestep,1.434,2.154
+44,correct,rollout,0.922,1.086
+44,constant,rollout,1.388,2.036

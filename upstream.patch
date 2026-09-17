@@ -220,123 +220,56 @@ index 0000000..2332e5a
 +  gravity_action_index: 2
 diff --git a/experiments/gravity_rollout_factorial/README.md b/experiments/gravity_rollout_factorial/README.md
 new file mode 100644
-index 0000000..de9a52a
+index 0000000..e2acfa9
 --- /dev/null
 +++ b/experiments/gravity_rollout_factorial/README.md
-@@ -0,0 +1,81 @@
+@@ -0,0 +1,35 @@
 +# Gravity and rollout factorial
 +
-+This experiment estimates the separate effects of physical-parameter
-+conditioning and autoregressive rollout training in SG-JEPA.
++This experiment separates physical-parameter conditioning from autoregressive
++rollout training in SG-JEPA.
 +
-+The four training cells use the same ViT-Tiny encoder, GRU predictor, latent
-+size, optimizer, data split, and 20-epoch schedule.
++## Cells
 +
-+| Cell | Gravity input during training and evaluation | World-model loss |
++| Cell | Gravity input | World-model objective |
 +| --- | --- | --- |
-+| `correct_onestep` | The normalized episode gravity | One-step teacher-forced loss |
-+| `correct_rollout` | The normalized episode gravity | Five-step autoregressive rollout loss |
-+| `constant_onestep` | Constant normalized mean, `0` | One-step teacher-forced loss |
-+| `constant_rollout` | Constant normalized mean, `0` | Five-step autoregressive rollout loss |
++| `correct_onestep` | True normalized episode gravity | One-step prediction |
++| `constant_onestep` | Normalized training mean, `0` | One-step prediction |
++| `correct_rollout` | True normalized episode gravity | Five-step autoregressive rollout |
++| `constant_rollout` | Normalized training mean, `0` | Five-step autoregressive rollout |
 +
-+Each cell trains once with world-model seed `42`. Each trained checkpoint gets
-+five independent probes and evaluations with seeds `42`, `43`, `44`, `45`, and
-+`46`. The primary evaluation uses the paper-scale Square dataset and the
-+existing state-probe metric at horizons 1, 3, 5, 9, 20, 32, and 44.
++Each cell trains with world-model seed `42`. Each checkpoint gets five probe
++and evaluation seeds, `42` through `46`.
 +
-+## Run on a CML submission node
++The rollout cells replace the one-step objective. They set
++`prediction_weight: 0.0` and `rollout_weight: 1.0`.
 +
-+Set these paths before submitting jobs. Keep the dataset and outputs in
-+`/cmlscratch/$USER`; keep the Python environment in a backed-up location if
-+you need it after the scratch allocation expires.
++## Entrypoints
 +
-+```bash
-+export SGJEPA_ROOT="$PWD"
-+export SGJEPA_PYTHON="$SGJEPA_ROOT/.venv-paper/bin/python"
-+export SGJEPA_DATASET="/cmlscratch/$USER/sg-jepa-factorial/data/square"
-+export SGJEPA_OUTPUT="/cmlscratch/$USER/sg-jepa-factorial/output"
-+```
++Set `SGJEPA_ROOT`, `SGJEPA_PYTHON`, `SGJEPA_DATASET`, and `SGJEPA_OUTPUT` in
++your environment. Then run the scripts in this order:
 +
-+Generate the shared dataset once:
++1. `slurm/data.sbatch` generates and verifies the shared Square dataset.
++2. `slurm/world_model.sbatch` trains one world model for each cell.
++3. `slurm/probe.sbatch` fits five probes for each cell.
++4. `slurm/evaluate.sbatch` evaluates five seeds for each cell.
 +
-+```bash
-+sbatch --account=cml-furongh --qos=cml-high_long experiments/gravity_rollout_factorial/slurm/data.sbatch
-+```
++The scripts use generic environment variables. They do not assume a specific
++cluster, account, user, or storage path.
 +
-+After the data job passes, submit the resource-specific arrays. The normal
-+split runs `correct_onestep` and `constant_rollout` on B300. It runs
-+`correct_rollout` and `constant_onestep` on H200.
-+
-+For the current run, reuse the completed `correct_onestep/seed_42` checkpoint.
-+The two B300 slots first ran `constant_onestep` and `correct_rollout`. Queue
-+`constant_rollout` with a 12-hour limit when a B300 slot opens.
-+
-+```bash
-+wm_onestep=$(sbatch --account=cml-furongh --qos=cml-high_long --export=ALL --parsable --time=12:00:00 --gres=gpu:b300-sxm:1 --array=2%1 experiments/gravity_rollout_factorial/slurm/world_model.sbatch)
-+wm_rollout=$(sbatch --account=cml-furongh --qos=cml-high_long --export=ALL --parsable --time=36:00:00 --gres=gpu:b300-sxm:1 --array=1%1 experiments/gravity_rollout_factorial/slurm/world_model.sbatch)
-+probe_onestep=$(sbatch --account=cml-furongh --qos=cml-high_long --export=ALL --parsable --time=1-00:00:00 --gres=gpu:b300-sxm:1 --array=10-14%8 --dependency=afterok:$wm_onestep experiments/gravity_rollout_factorial/slurm/probe.sbatch)
-+probe_rollout=$(sbatch --account=cml-furongh --qos=cml-high_long --export=ALL --parsable --time=1-00:00:00 --gres=gpu:b300-sxm:1 --array=5-9%8 --dependency=afterok:$wm_rollout experiments/gravity_rollout_factorial/slurm/probe.sbatch)
-+eval_onestep=$(sbatch --account=cml-furongh --qos=cml-high_long --export=ALL --parsable --time=1-00:00:00 --gres=gpu:b300-sxm:1 --array=10-14%8 --dependency=afterok:$probe_onestep experiments/gravity_rollout_factorial/slurm/evaluate.sbatch)
-+eval_rollout=$(sbatch --account=cml-furongh --qos=cml-high_long --export=ALL --parsable --time=1-00:00:00 --gres=gpu:b300-sxm:1 --array=5-9%8 --dependency=afterok:$probe_rollout experiments/gravity_rollout_factorial/slurm/evaluate.sbatch)
-+wm_constant_rollout=$(sbatch --account=cml-furongh --qos=cml-high_long --export=ALL --parsable --time=12:00:00 --gres=gpu:b300-sxm:1 --array=3%1 experiments/gravity_rollout_factorial/slurm/world_model.sbatch)
-+probe_constant_rollout=$(sbatch --account=cml-furongh --qos=cml-high_long --export=ALL --parsable --time=1-00:00:00 --gres=gpu:b300-sxm:1 --array=15-19%8 --dependency=afterok:$wm_constant_rollout experiments/gravity_rollout_factorial/slurm/probe.sbatch)
-+eval_constant_rollout=$(sbatch --account=cml-furongh --qos=cml-high_long --export=ALL --parsable --time=1-00:00:00 --gres=gpu:b300-sxm:1 --array=15-19%8 --dependency=afterok:$probe_constant_rollout experiments/gravity_rollout_factorial/slurm/evaluate.sbatch)
-+printf 'world one-step=%s world rollout=%s world constant-rollout=%s probe one-step=%s probe rollout=%s probe constant-rollout=%s eval one-step=%s eval rollout=%s eval constant-rollout=%s\\n' "$wm_onestep" "$wm_rollout" "$wm_constant_rollout" "$probe_onestep" "$probe_rollout" "$probe_constant_rollout" "$eval_onestep" "$eval_rollout" "$eval_constant_rollout"
-+```
-+
-+For a fresh run, the world-model array uses 4 entries, one per cell. In this
-+resumed run, the completed `correct_onestep/seed_42` checkpoint is reused. The
-+two world-model jobs above train the one-step `constant_onestep` cell and the
-+five-step `correct_rollout` cell. The separate `constant_rollout` job uses the
-+same B300 pool and a 12-hour limit. The probe and evaluation jobs above cover
-+five downstream seeds for each new cell.
-+Each later stage checks for the output from its previous stage before it starts.
-+
-+Monitor the jobs with:
-+
-+```bash
-+squeue --user="$USER"
-+sacct --starttime=today --format=JobID,JobName,State,Elapsed,MaxRSS,AllocTRES
-+```
-+
-+## Interpret the result
-+
-+For each horizon, compare the four cell means. The rollout effect at a fixed
-+gravity condition is `correct_rollout - correct_onestep` or
-+`constant_rollout - constant_onestep`. The grounding effect at a fixed loss is
-+`correct_onestep - constant_onestep` or
-+`correct_rollout - constant_rollout`.
-+
-+The interaction is
-+
-+```text
-+(correct_rollout - correct_onestep)
-+- (constant_rollout - constant_onestep)
-+```
-+
-+A positive interaction means that rollout training helps more when the model
-+has the correct gravity input. Report the five downstream-seed results as
-+probe/evaluation variability, not as independent world-model training runs.
-+
-+## Scope
-+
-+This first run tests prediction only. It does not train a downstream diffusion
-+policy. The paper gives the policy its own gravity input, which would add a
-+second route for the physical parameter to affect control.
++Use `slurm/submit.sh` to provide the partition, QoS, and GPU resource required
++by your site.
 diff --git a/experiments/gravity_rollout_factorial/slurm/data.sbatch b/experiments/gravity_rollout_factorial/slurm/data.sbatch
-new file mode 100644
-index 0000000..6ff23c0
+new file mode 100755
+index 0000000..546f0bb
 --- /dev/null
 +++ b/experiments/gravity_rollout_factorial/slurm/data.sbatch
-@@ -0,0 +1,42 @@
+@@ -0,0 +1,39 @@
 +#!/usr/bin/env bash
 +#SBATCH --job-name=sgj-factorial-data
-+#SBATCH --partition=cml-furongh
-+#SBATCH --qos=cml-high_long
 +#SBATCH --nodes=1
 +#SBATCH --ntasks=1
 +#SBATCH --cpus-per-task=16
-+#SBATCH --gres=gpu:b300-sxm:1
 +#SBATCH --mem=96G
 +#SBATCH --time=1-00:00:00
 +#SBATCH --output=slurm-%x-%j.out
@@ -372,19 +305,16 @@ index 0000000..6ff23c0
 +  --train-episodes 8000 \
 +  --test-episodes 40000
 diff --git a/experiments/gravity_rollout_factorial/slurm/evaluate.sbatch b/experiments/gravity_rollout_factorial/slurm/evaluate.sbatch
-new file mode 100644
-index 0000000..17f011d
+new file mode 100755
+index 0000000..7cab2ad
 --- /dev/null
 +++ b/experiments/gravity_rollout_factorial/slurm/evaluate.sbatch
-@@ -0,0 +1,63 @@
+@@ -0,0 +1,61 @@
 +#!/usr/bin/env bash
 +#SBATCH --job-name=sgj-factorial-eval
-+#SBATCH --partition=cml-furongh
-+#SBATCH --qos=cml-high_long
 +#SBATCH --nodes=1
 +#SBATCH --ntasks=1
 +#SBATCH --cpus-per-task=8
-+#SBATCH --gres=gpu:b300-sxm:1
 +#SBATCH --mem=96G
 +#SBATCH --time=1-00:00:00
 +#SBATCH --array=0-19%8
@@ -442,19 +372,16 @@ index 0000000..17f011d
 +"$SGJEPA_PYTHON" scripts/verify_examples.py report \
 +  --path "$evaluation_dir/evaluation.json"
 diff --git a/experiments/gravity_rollout_factorial/slurm/probe.sbatch b/experiments/gravity_rollout_factorial/slurm/probe.sbatch
-new file mode 100644
-index 0000000..93490e6
+new file mode 100755
+index 0000000..679b1de
 --- /dev/null
 +++ b/experiments/gravity_rollout_factorial/slurm/probe.sbatch
-@@ -0,0 +1,60 @@
+@@ -0,0 +1,58 @@
 +#!/usr/bin/env bash
 +#SBATCH --job-name=sgj-factorial-probe
-+#SBATCH --partition=cml-furongh
-+#SBATCH --qos=cml-high_long
 +#SBATCH --nodes=1
 +#SBATCH --ntasks=1
 +#SBATCH --cpus-per-task=8
-+#SBATCH --gres=gpu:b300-sxm:1
 +#SBATCH --mem=96G
 +#SBATCH --time=1-00:00:00
 +#SBATCH --array=0-19%8
@@ -508,20 +435,35 @@ index 0000000..93490e6
 +  --seed "$seed"
 +"$SGJEPA_PYTHON" scripts/verify_examples.py report \
 +  --path "$probe_dir/probe_summary.json"
+diff --git a/experiments/gravity_rollout_factorial/slurm/submit.sh b/experiments/gravity_rollout_factorial/slurm/submit.sh
+new file mode 100755
+index 0000000..6b201a8
+--- /dev/null
++++ b/experiments/gravity_rollout_factorial/slurm/submit.sh
+@@ -0,0 +1,12 @@
++#!/usr/bin/env bash
++set -euo pipefail
++
++: "${SGJEPA_PARTITION:?set the site-specific Slurm partition}"
++: "${SGJEPA_QOS:?set the site-specific Slurm QoS}"
++: "${SGJEPA_GRES:?set the site-specific GPU resource, for example gpu:1}"
++
++sbatch \
++  --partition="$SGJEPA_PARTITION" \
++  --qos="$SGJEPA_QOS" \
++  --gres="$SGJEPA_GRES" \
++  "$@"
 diff --git a/experiments/gravity_rollout_factorial/slurm/world_model.sbatch b/experiments/gravity_rollout_factorial/slurm/world_model.sbatch
-new file mode 100644
-index 0000000..ad98b9b
+new file mode 100755
+index 0000000..d3a6a03
 --- /dev/null
 +++ b/experiments/gravity_rollout_factorial/slurm/world_model.sbatch
-@@ -0,0 +1,55 @@
+@@ -0,0 +1,51 @@
 +#!/usr/bin/env bash
 +#SBATCH --job-name=sgj-factorial-wm
-+#SBATCH --partition=cml-furongh
-+#SBATCH --qos=cml-high_long
 +#SBATCH --nodes=1
 +#SBATCH --ntasks=1
 +#SBATCH --cpus-per-task=8
-+#SBATCH --gres=gpu:b300-sxm:1
 +#SBATCH --mem=192G
 +#SBATCH --time=2-00:00:00
 +#SBATCH --array=0-3%4
@@ -785,6 +727,28 @@ index 5e83097..3da56c1 100644
          if model_kind == "native":
              true_sequence = _encode_native(
                  model,
+diff --git a/sg_jepa/models/factory.py b/sg_jepa/models/factory.py
+index 3fda222..567df94 100644
+--- a/sg_jepa/models/factory.py
++++ b/sg_jepa/models/factory.py
+@@ -2,6 +2,7 @@
+
+ from __future__ import annotations
+
++import torch
+ from torch import nn
+
+ from sg_jepa.config import WorldModelConfig
+@@ -26,6 +27,9 @@ _VIT_SIZES = {
+ def build_vit_encoder(config: WorldModelConfig) -> nn.Module:
+     """Reproduce ``stable_pretraining.backbone.utils.vit_hf`` locally."""
+
++    if torch.cuda.is_available():
++        torch.backends.cuda.enable_cudnn_sdp(False)
++
+     try:
+         from transformers import ViTConfig, ViTModel
+     except ImportError as exc:  # pragma: no cover - dependency error is explicit.
 diff --git a/sg_jepa/training.py b/sg_jepa/training.py
 index 4ff91d4..f5fb8ac 100644
 --- a/sg_jepa/training.py
@@ -911,25 +875,3 @@ index 0553e7f..f7718b1 100644
              args.data,
              args.output_dir,
              device=args.device,
-+            resume=args.resume,
-+            max_steps=args.max_steps,
-+        )
-diff --git a/sg_jepa/models/factory.py b/sg_jepa/models/factory.py
---- a/sg_jepa/models/factory.py
-+++ b/sg_jepa/models/factory.py
-@@ -3,6 +3,7 @@
- from __future__ import annotations
-
-+import torch
- from torch import nn
-
- from sg_jepa.config import WorldModelConfig
-@@ -27,6 +28,8 @@
- def build_vit_encoder(config: WorldModelConfig) -> nn.Module:
-     """Reproduce ``stable_pretraining.backbone.utils.vit_hf`` locally."""
-
-+    if torch.cuda.is_available():
-+        torch.backends.cuda.enable_cudnn_sdp(False)
-+
-     try:
-         from transformers import ViTConfig, ViTModel
