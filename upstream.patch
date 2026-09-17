@@ -1,0 +1,935 @@
+diff --git a/configs/train/square_factorial_constant_onestep.yaml b/configs/train/square_factorial_constant_onestep.yaml
+new file mode 100644
+index 0000000..c98166b
+--- /dev/null
++++ b/configs/train/square_factorial_constant_onestep.yaml
+@@ -0,0 +1,49 @@
++name: square-factorial-constant-onestep
++model:
++  image_size: 128
++  patch_size: 8
++  encoder_scale: tiny
++  embed_dim: 256
++  action_dim: 3
++  history_size: 20
++  predictor_kind: gru
++  predictor_hidden_dim: 512
++  predictor_depth: 3
++  predictor_heads: 16
++  predictor_mlp_dim: 2048
++  predictor_dim_head: 64
++  predictor_dropout: 0.1
++  predictor_emb_dropout: 0.0
++  predictor_conditioning: concat
++  predictor_residual_init: 0.1
++  projector_hidden_dim: 2048
++objective:
++  prediction_weight: 1.0
++  rollout_weight: 0.0
++  rollout_horizon: 0
++  rollout_gamma: 0.95
++  target_detach: false
++  sigreg_weight: 0.72
++  sigreg_knots: 17
++  sigreg_num_proj: 1024
++train:
++  epochs: 20
++  batch_size: 64
++  learning_rate: 0.00005
++  muon_learning_rate: 0.0001
++  weight_decay: 0.001
++  muon_momentum: 0.95
++  muon_ns_steps: 5
++  muon_rms_match_scale: 0.4
++  lr_schedule: warmup_cosine_cooldown
++  lr_warmup_epochs: 1.0
++  lr_cooldown_start_fraction: 0.8
++  lr_min_factor: 0.1
++  gradient_clip: 1.0
++  num_workers: 8
++  drop_last: true
++  checkpoint_every_epochs: 5
++  seed: 42
++  precision: bf16
++  gravity_conditioning: constant
++  gravity_action_index: 2
+diff --git a/configs/train/square_factorial_constant_rollout.yaml b/configs/train/square_factorial_constant_rollout.yaml
+new file mode 100644
+index 0000000..9d87411
+--- /dev/null
++++ b/configs/train/square_factorial_constant_rollout.yaml
+@@ -0,0 +1,49 @@
++name: square-factorial-constant-rollout
++model:
++  image_size: 128
++  patch_size: 8
++  encoder_scale: tiny
++  embed_dim: 256
++  action_dim: 3
++  history_size: 20
++  predictor_kind: gru
++  predictor_hidden_dim: 512
++  predictor_depth: 3
++  predictor_heads: 16
++  predictor_mlp_dim: 2048
++  predictor_dim_head: 64
++  predictor_dropout: 0.1
++  predictor_emb_dropout: 0.0
++  predictor_conditioning: concat
++  predictor_residual_init: 0.1
++  projector_hidden_dim: 2048
++objective:
++  prediction_weight: 0.0
++  rollout_weight: 1.0
++  rollout_horizon: 5
++  rollout_gamma: 0.95
++  target_detach: false
++  sigreg_weight: 0.72
++  sigreg_knots: 17
++  sigreg_num_proj: 1024
++train:
++  epochs: 20
++  batch_size: 64
++  learning_rate: 0.00005
++  muon_learning_rate: 0.0001
++  weight_decay: 0.001
++  muon_momentum: 0.95
++  muon_ns_steps: 5
++  muon_rms_match_scale: 0.4
++  lr_schedule: warmup_cosine_cooldown
++  lr_warmup_epochs: 1.0
++  lr_cooldown_start_fraction: 0.8
++  lr_min_factor: 0.1
++  gradient_clip: 1.0
++  num_workers: 8
++  drop_last: true
++  checkpoint_every_epochs: 5
++  seed: 42
++  precision: bf16
++  gravity_conditioning: constant
++  gravity_action_index: 2
+diff --git a/configs/train/square_factorial_correct_onestep.yaml b/configs/train/square_factorial_correct_onestep.yaml
+new file mode 100644
+index 0000000..818f4d1
+--- /dev/null
++++ b/configs/train/square_factorial_correct_onestep.yaml
+@@ -0,0 +1,49 @@
++name: square-factorial-correct-onestep
++model:
++  image_size: 128
++  patch_size: 8
++  encoder_scale: tiny
++  embed_dim: 256
++  action_dim: 3
++  history_size: 20
++  predictor_kind: gru
++  predictor_hidden_dim: 512
++  predictor_depth: 3
++  predictor_heads: 16
++  predictor_mlp_dim: 2048
++  predictor_dim_head: 64
++  predictor_dropout: 0.1
++  predictor_emb_dropout: 0.0
++  predictor_conditioning: concat
++  predictor_residual_init: 0.1
++  projector_hidden_dim: 2048
++objective:
++  prediction_weight: 1.0
++  rollout_weight: 0.0
++  rollout_horizon: 0
++  rollout_gamma: 0.95
++  target_detach: false
++  sigreg_weight: 0.72
++  sigreg_knots: 17
++  sigreg_num_proj: 1024
++train:
++  epochs: 20
++  batch_size: 64
++  learning_rate: 0.00005
++  muon_learning_rate: 0.0001
++  weight_decay: 0.001
++  muon_momentum: 0.95
++  muon_ns_steps: 5
++  muon_rms_match_scale: 0.4
++  lr_schedule: warmup_cosine_cooldown
++  lr_warmup_epochs: 1.0
++  lr_cooldown_start_fraction: 0.8
++  lr_min_factor: 0.1
++  gradient_clip: 1.0
++  num_workers: 8
++  drop_last: true
++  checkpoint_every_epochs: 5
++  seed: 42
++  precision: bf16
++  gravity_conditioning: correct
++  gravity_action_index: 2
+diff --git a/configs/train/square_factorial_correct_rollout.yaml b/configs/train/square_factorial_correct_rollout.yaml
+new file mode 100644
+index 0000000..2332e5a
+--- /dev/null
++++ b/configs/train/square_factorial_correct_rollout.yaml
+@@ -0,0 +1,49 @@
++name: square-factorial-correct-rollout
++model:
++  image_size: 128
++  patch_size: 8
++  encoder_scale: tiny
++  embed_dim: 256
++  action_dim: 3
++  history_size: 20
++  predictor_kind: gru
++  predictor_hidden_dim: 512
++  predictor_depth: 3
++  predictor_heads: 16
++  predictor_mlp_dim: 2048
++  predictor_dim_head: 64
++  predictor_dropout: 0.1
++  predictor_emb_dropout: 0.0
++  predictor_conditioning: concat
++  predictor_residual_init: 0.1
++  projector_hidden_dim: 2048
++objective:
++  prediction_weight: 0.0
++  rollout_weight: 1.0
++  rollout_horizon: 5
++  rollout_gamma: 0.95
++  target_detach: false
++  sigreg_weight: 0.72
++  sigreg_knots: 17
++  sigreg_num_proj: 1024
++train:
++  epochs: 20
++  batch_size: 64
++  learning_rate: 0.00005
++  muon_learning_rate: 0.0001
++  weight_decay: 0.001
++  muon_momentum: 0.95
++  muon_ns_steps: 5
++  muon_rms_match_scale: 0.4
++  lr_schedule: warmup_cosine_cooldown
++  lr_warmup_epochs: 1.0
++  lr_cooldown_start_fraction: 0.8
++  lr_min_factor: 0.1
++  gradient_clip: 1.0
++  num_workers: 8
++  drop_last: true
++  checkpoint_every_epochs: 5
++  seed: 42
++  precision: bf16
++  gravity_conditioning: correct
++  gravity_action_index: 2
+diff --git a/experiments/gravity_rollout_factorial/README.md b/experiments/gravity_rollout_factorial/README.md
+new file mode 100644
+index 0000000..de9a52a
+--- /dev/null
++++ b/experiments/gravity_rollout_factorial/README.md
+@@ -0,0 +1,81 @@
++# Gravity and rollout factorial
++
++This experiment estimates the separate effects of physical-parameter
++conditioning and autoregressive rollout training in SG-JEPA.
++
++The four training cells use the same ViT-Tiny encoder, GRU predictor, latent
++size, optimizer, data split, and 20-epoch schedule.
++
++| Cell | Gravity input during training and evaluation | World-model loss |
++| --- | --- | --- |
++| `correct_onestep` | The normalized episode gravity | One-step teacher-forced loss |
++| `correct_rollout` | The normalized episode gravity | Five-step autoregressive rollout loss |
++| `constant_onestep` | Constant normalized mean, `0` | One-step teacher-forced loss |
++| `constant_rollout` | Constant normalized mean, `0` | Five-step autoregressive rollout loss |
++
++Each cell trains once with world-model seed `42`. Each trained checkpoint gets
++five independent probes and evaluations with seeds `42`, `43`, `44`, `45`, and
++`46`. The primary evaluation uses the paper-scale Square dataset and the
++existing state-probe metric at horizons 1, 3, 5, 9, 20, 32, and 44.
++
++## Run on a CML submission node
++
++Set these paths before submitting jobs. Keep the dataset and outputs in
++`/cmlscratch/$USER`; keep the Python environment in a backed-up location if
++you need it after the scratch allocation expires.
++
++```bash
++export SGJEPA_ROOT="$PWD"
++export SGJEPA_PYTHON="$SGJEPA_ROOT/.venv-paper/bin/python"
++export SGJEPA_DATASET="/cmlscratch/$USER/sg-jepa-factorial/data/square"
++export SGJEPA_OUTPUT="/cmlscratch/$USER/sg-jepa-factorial/output"
++```
++
++Generate the shared dataset once:
++
++```bash
++sbatch --account=cml-furongh --qos=cml-high_long experiments/gravity_rollout_factorial/slurm/data.sbatch
++```
++
++After the data job passes, submit the resource-specific arrays. The normal
++split runs `correct_onestep` and `constant_rollout` on B300. It runs
++`correct_rollout` and `constant_onestep` on H200.
++
++For the current run, reuse the completed `correct_onestep/seed_42` checkpoint.
++The two B300 slots first ran `constant_onestep` and `correct_rollout`. Queue
++`constant_rollout` with a 12-hour limit when a B300 slot opens.
++
++```bash
++wm_onestep=$(sbatch --account=cml-furongh --qos=cml-high_long --export=ALL --parsable --time=12:00:00 --gres=gpu:b300-sxm:1 --array=2%1 experiments/gravity_rollout_factorial/slurm/world_model.sbatch)
++wm_rollout=$(sbatch --account=cml-furongh --qos=cml-high_long --export=ALL --parsable --time=36:00:00 --gres=gpu:b300-sxm:1 --array=1%1 experiments/gravity_rollout_factorial/slurm/world_model.sbatch)
++probe_onestep=$(sbatch --account=cml-furongh --qos=cml-high_long --export=ALL --parsable --time=1-00:00:00 --gres=gpu:b300-sxm:1 --array=10-14%8 --dependency=afterok:$wm_onestep experiments/gravity_rollout_factorial/slurm/probe.sbatch)
++probe_rollout=$(sbatch --account=cml-furongh --qos=cml-high_long --export=ALL --parsable --time=1-00:00:00 --gres=gpu:b300-sxm:1 --array=5-9%8 --dependency=afterok:$wm_rollout experiments/gravity_rollout_factorial/slurm/probe.sbatch)
++eval_onestep=$(sbatch --account=cml-furongh --qos=cml-high_long --export=ALL --parsable --time=1-00:00:00 --gres=gpu:b300-sxm:1 --array=10-14%8 --dependency=afterok:$probe_onestep experiments/gravity_rollout_factorial/slurm/evaluate.sbatch)
++eval_rollout=$(sbatch --account=cml-furongh --qos=cml-high_long --export=ALL --parsable --time=1-00:00:00 --gres=gpu:b300-sxm:1 --array=5-9%8 --dependency=afterok:$probe_rollout experiments/gravity_rollout_factorial/slurm/evaluate.sbatch)
++wm_constant_rollout=$(sbatch --account=cml-furongh --qos=cml-high_long --export=ALL --parsable --time=12:00:00 --gres=gpu:b300-sxm:1 --array=3%1 experiments/gravity_rollout_factorial/slurm/world_model.sbatch)
++probe_constant_rollout=$(sbatch --account=cml-furongh --qos=cml-high_long --export=ALL --parsable --time=1-00:00:00 --gres=gpu:b300-sxm:1 --array=15-19%8 --dependency=afterok:$wm_constant_rollout experiments/gravity_rollout_factorial/slurm/probe.sbatch)
++eval_constant_rollout=$(sbatch --account=cml-furongh --qos=cml-high_long --export=ALL --parsable --time=1-00:00:00 --gres=gpu:b300-sxm:1 --array=15-19%8 --dependency=afterok:$probe_constant_rollout experiments/gravity_rollout_factorial/slurm/evaluate.sbatch)
++printf 'world one-step=%s world rollout=%s world constant-rollout=%s probe one-step=%s probe rollout=%s probe constant-rollout=%s eval one-step=%s eval rollout=%s eval constant-rollout=%s\\n' "$wm_onestep" "$wm_rollout" "$wm_constant_rollout" "$probe_onestep" "$probe_rollout" "$probe_constant_rollout" "$eval_onestep" "$eval_rollout" "$eval_constant_rollout"
++```
++
++For a fresh run, the world-model array uses 4 entries, one per cell. In this
++resumed run, the completed `correct_onestep/seed_42` checkpoint is reused. The
++two world-model jobs above train the one-step `constant_onestep` cell and the
++five-step `correct_rollout` cell. The separate `constant_rollout` job uses the
++same B300 pool and a 12-hour limit. The probe and evaluation jobs above cover
++five downstream seeds for each new cell.
++Each later stage checks for the output from its previous stage before it starts.
++
++Monitor the jobs with:
++
++```bash
++squeue --user="$USER"
++sacct --starttime=today --format=JobID,JobName,State,Elapsed,MaxRSS,AllocTRES
++```
++
++## Interpret the result
++
++For each horizon, compare the four cell means. The rollout effect at a fixed
++gravity condition is `correct_rollout - correct_onestep` or
++`constant_rollout - constant_onestep`. The grounding effect at a fixed loss is
++`correct_onestep - constant_onestep` or
++`correct_rollout - constant_rollout`.
++
++The interaction is
++
++```text
++(correct_rollout - correct_onestep)
++- (constant_rollout - constant_onestep)
++```
++
++A positive interaction means that rollout training helps more when the model
++has the correct gravity input. Report the five downstream-seed results as
++probe/evaluation variability, not as independent world-model training runs.
++
++## Scope
++
++This first run tests prediction only. It does not train a downstream diffusion
++policy. The paper gives the policy its own gravity input, which would add a
++second route for the physical parameter to affect control.
+diff --git a/experiments/gravity_rollout_factorial/slurm/data.sbatch b/experiments/gravity_rollout_factorial/slurm/data.sbatch
+new file mode 100644
+index 0000000..6ff23c0
+--- /dev/null
++++ b/experiments/gravity_rollout_factorial/slurm/data.sbatch
+@@ -0,0 +1,42 @@
++#!/usr/bin/env bash
++#SBATCH --job-name=sgj-factorial-data
++#SBATCH --partition=cml-furongh
++#SBATCH --qos=cml-high_long
++#SBATCH --nodes=1
++#SBATCH --ntasks=1
++#SBATCH --cpus-per-task=16
++#SBATCH --gres=gpu:b300-sxm:1
++#SBATCH --mem=96G
++#SBATCH --time=1-00:00:00
++#SBATCH --output=slurm-%x-%j.out
++
++set -euo pipefail
++
++: "${SGJEPA_ROOT:?set SGJEPA_ROOT to the SG-JEPA checkout}"
++: "${SGJEPA_PYTHON:?set SGJEPA_PYTHON to the paper environment}"
++: "${SGJEPA_DATASET:?set SGJEPA_DATASET to the shared Square dataset path}"
++
++export PYTHONNOUSERSITE=1
++export PYTHONDONTWRITEBYTECODE=1
++export PYTHONUNBUFFERED=1
++export MUJOCO_GL=egl
++export OMP_NUM_THREADS="${SLURM_CPUS_PER_TASK:-16}"
++
++cd "$SGJEPA_ROOT"
++if [[ -e "$SGJEPA_DATASET" ]]; then
++  echo "dataset path already exists: $SGJEPA_DATASET" >&2
++  exit 2
++fi
++
++mkdir -p "$(dirname -- "$SGJEPA_DATASET")"
++"$SGJEPA_PYTHON" -m data_generation.generate \
++  --recipe data_generation/recipes/main_text.yaml \
++  --task square \
++  --split all \
++  --output "$SGJEPA_DATASET"
++"$SGJEPA_PYTHON" scripts/verify_examples.py data \
++  --path "$SGJEPA_DATASET" \
++  --task square \
++  --episodes 48000 \
++  --train-episodes 8000 \
++  --test-episodes 40000
+diff --git a/experiments/gravity_rollout_factorial/slurm/evaluate.sbatch b/experiments/gravity_rollout_factorial/slurm/evaluate.sbatch
+new file mode 100644
+index 0000000..17f011d
+--- /dev/null
++++ b/experiments/gravity_rollout_factorial/slurm/evaluate.sbatch
+@@ -0,0 +1,63 @@
++#!/usr/bin/env bash
++#SBATCH --job-name=sgj-factorial-eval
++#SBATCH --partition=cml-furongh
++#SBATCH --qos=cml-high_long
++#SBATCH --nodes=1
++#SBATCH --ntasks=1
++#SBATCH --cpus-per-task=8
++#SBATCH --gres=gpu:b300-sxm:1
++#SBATCH --mem=96G
++#SBATCH --time=1-00:00:00
++#SBATCH --array=0-19%8
++#SBATCH --output=slurm-%x-%A_%a.out
++
++set -euo pipefail
++
++: "${SGJEPA_ROOT:?set SGJEPA_ROOT to the SG-JEPA checkout}"
++: "${SGJEPA_PYTHON:?set SGJEPA_PYTHON to the paper environment}"
++: "${SGJEPA_DATASET:?set SGJEPA_DATASET to the shared Square dataset path}"
++: "${SGJEPA_OUTPUT:?set SGJEPA_OUTPUT to the experiment output path}"
++
++conditions=(correct_onestep correct_rollout constant_onestep constant_rollout)
++seeds=(42 43 44 45 46)
++train_seed=42
++condition_index=$((SLURM_ARRAY_TASK_ID / 5))
++seed_index=$((SLURM_ARRAY_TASK_ID % 5))
++condition="${conditions[$condition_index]}"
++seed="${seeds[$seed_index]}"
++
++case "$condition" in
++  correct_onestep) config="configs/train/square_factorial_correct_onestep.yaml" ;;
++  correct_rollout) config="configs/train/square_factorial_correct_rollout.yaml" ;;
++  constant_onestep) config="configs/train/square_factorial_constant_onestep.yaml" ;;
++  constant_rollout) config="configs/train/square_factorial_constant_rollout.yaml" ;;
++  *) echo "unknown condition: $condition" >&2; exit 2 ;;
++esac
++
++world_model_dir="$SGJEPA_OUTPUT/world_models/$condition/seed_$train_seed"
++probe_dir="$SGJEPA_OUTPUT/probes/$condition/seed_$seed"
++evaluation_dir="$SGJEPA_OUTPUT/evaluations/$condition/seed_$seed"
++export PYTHONNOUSERSITE=1
++export PYTHONDONTWRITEBYTECODE=1
++export PYTHONUNBUFFERED=1
++export MUJOCO_GL=egl
++export OMP_NUM_THREADS="${SLURM_CPUS_PER_TASK:-8}"
++
++cd "$SGJEPA_ROOT"
++test -f "$world_model_dir/checkpoint.pt"
++test -f "$probe_dir/probe_weights.pt"
++test ! -e "$evaluation_dir"
++"$SGJEPA_PYTHON" evaluate_prediction.py \
++  --task square \
++  --method "$condition-seed-$seed" \
++  --config "$config" \
++  --checkpoint "$world_model_dir/checkpoint.pt" \
++  --probe "$probe_dir/probe_weights.pt" \
++  --data "$SGJEPA_DATASET" \
++  --normalization-stats "$world_model_dir/normalization_stats.json" \
++  --episode-manifest data_generation/manifests/planar_test_gstrat200_seed42.json \
++  --output-dir "$evaluation_dir" \
++  --device cuda \
++  --horizon 44 \
++  --max-episodes 5000
++"$SGJEPA_PYTHON" scripts/verify_examples.py report \
++  --path "$evaluation_dir/evaluation.json"
+diff --git a/experiments/gravity_rollout_factorial/slurm/probe.sbatch b/experiments/gravity_rollout_factorial/slurm/probe.sbatch
+new file mode 100644
+index 0000000..93490e6
+--- /dev/null
++++ b/experiments/gravity_rollout_factorial/slurm/probe.sbatch
+@@ -0,0 +1,60 @@
++#!/usr/bin/env bash
++#SBATCH --job-name=sgj-factorial-probe
++#SBATCH --partition=cml-furongh
++#SBATCH --qos=cml-high_long
++#SBATCH --nodes=1
++#SBATCH --ntasks=1
++#SBATCH --cpus-per-task=8
++#SBATCH --gres=gpu:b300-sxm:1
++#SBATCH --mem=96G
++#SBATCH --time=1-00:00:00
++#SBATCH --array=0-19%8
++#SBATCH --output=slurm-%x-%A_%a.out
++
++set -euo pipefail
++
++: "${SGJEPA_ROOT:?set SGJEPA_ROOT to the SG-JEPA checkout}"
++: "${SGJEPA_PYTHON:?set SGJEPA_PYTHON to the paper environment}"
++: "${SGJEPA_DATASET:?set SGJEPA_DATASET to the shared Square dataset path}"
++: "${SGJEPA_OUTPUT:?set SGJEPA_OUTPUT to the experiment output path}"
++
++conditions=(correct_onestep correct_rollout constant_onestep constant_rollout)
++seeds=(42 43 44 45 46)
++train_seed=42
++condition_index=$((SLURM_ARRAY_TASK_ID / 5))
++seed_index=$((SLURM_ARRAY_TASK_ID % 5))
++condition="${conditions[$condition_index]}"
++seed="${seeds[$seed_index]}"
++
++case "$condition" in
++  correct_onestep) config="configs/train/square_factorial_correct_onestep.yaml" ;;
++  correct_rollout) config="configs/train/square_factorial_correct_rollout.yaml" ;;
++  constant_onestep) config="configs/train/square_factorial_constant_onestep.yaml" ;;
++  constant_rollout) config="configs/train/square_factorial_constant_rollout.yaml" ;;
++  *) echo "unknown condition: $condition" >&2; exit 2 ;;
++esac
++
++world_model_dir="$SGJEPA_OUTPUT/world_models/$condition/seed_$train_seed"
++probe_dir="$SGJEPA_OUTPUT/probes/$condition/seed_$seed"
++export PYTHONNOUSERSITE=1
++export PYTHONDONTWRITEBYTECODE=1
++export PYTHONUNBUFFERED=1
++export MUJOCO_GL=egl
++export OMP_NUM_THREADS="${SLURM_CPUS_PER_TASK:-8}"
++
++cd "$SGJEPA_ROOT"
++test -f "$world_model_dir/checkpoint.pt"
++test ! -e "$probe_dir"
++"$SGJEPA_PYTHON" train_probe.py \
++  --task square \
++  --config "$config" \
++  --checkpoint "$world_model_dir/checkpoint.pt" \
++  --data "$SGJEPA_DATASET" \
++  --output-dir "$probe_dir" \
++  --split "$world_model_dir/train_val_split.json" \
++  --device cuda \
++  --max-train-windows 50000 \
++  --max-val-windows 50000 \
++  --num-workers 8 \
++  --seed "$seed"
++"$SGJEPA_PYTHON" scripts/verify_examples.py report \
++  --path "$probe_dir/probe_summary.json"
+diff --git a/experiments/gravity_rollout_factorial/slurm/world_model.sbatch b/experiments/gravity_rollout_factorial/slurm/world_model.sbatch
+new file mode 100644
+index 0000000..ad98b9b
+--- /dev/null
++++ b/experiments/gravity_rollout_factorial/slurm/world_model.sbatch
+@@ -0,0 +1,55 @@
++#!/usr/bin/env bash
++#SBATCH --job-name=sgj-factorial-wm
++#SBATCH --partition=cml-furongh
++#SBATCH --qos=cml-high_long
++#SBATCH --nodes=1
++#SBATCH --ntasks=1
++#SBATCH --cpus-per-task=8
++#SBATCH --gres=gpu:b300-sxm:1
++#SBATCH --mem=192G
++#SBATCH --time=2-00:00:00
++#SBATCH --array=0-3%4
++#SBATCH --output=slurm-%x-%A_%a.out
++
++set -euo pipefail
++
++: "${SGJEPA_ROOT:?set SGJEPA_ROOT to the SG-JEPA checkout}"
++: "${SGJEPA_PYTHON:?set SGJEPA_PYTHON to the paper environment}"
++: "${SGJEPA_DATASET:?set SGJEPA_DATASET to the shared Square dataset path}"
++: "${SGJEPA_OUTPUT:?set SGJEPA_OUTPUT to the experiment output path}"
++
++conditions=(correct_onestep correct_rollout constant_onestep constant_rollout)
++train_seed=42
++condition_index=$SLURM_ARRAY_TASK_ID
++condition="${conditions[$condition_index]}"
++seed="$train_seed"
++
++case "$condition" in
++  correct_onestep) config="configs/train/square_factorial_correct_onestep.yaml" ;;
++  correct_rollout) config="configs/train/square_factorial_correct_rollout.yaml" ;;
++  constant_onestep) config="configs/train/square_factorial_constant_onestep.yaml" ;;
++  constant_rollout) config="configs/train/square_factorial_constant_rollout.yaml" ;;
++  *) echo "unknown condition: $condition" >&2; exit 2 ;;
++esac
++
++output_dir="$SGJEPA_OUTPUT/world_models/$condition/seed_$seed"
++export PYTHONNOUSERSITE=1
++export PYTHONDONTWRITEBYTECODE=1
++export PYTHONUNBUFFERED=1
++export MUJOCO_GL=egl
++export OMP_NUM_THREADS="${SLURM_CPUS_PER_TASK:-8}"
++
++cd "$SGJEPA_ROOT"
++mkdir -p "$output_dir"
++"$SGJEPA_PYTHON" train.py \
++  --config "$config" \
++  --data "$SGJEPA_DATASET" \
++  --output-dir "$output_dir" \
++  --device cuda \
++  --seed "$seed"
++"$SGJEPA_PYTHON" scripts/verify_examples.py world-model \
++  --output "$output_dir" \
++  --config "$config" \
++  --seed "$seed" \
++  --completed-epochs 20
+diff --git a/scripts/verify_examples.py b/scripts/verify_examples.py
+index fdaa136..c893d82 100644
+--- a/scripts/verify_examples.py
++++ b/scripts/verify_examples.py
+@@ -4,6 +4,7 @@ from __future__ import annotations
+
+ import argparse
+ import json
++from dataclasses import replace
+ from pathlib import Path
+ from typing import Any
+
+@@ -69,6 +70,8 @@ def _world_model(args: argparse.Namespace) -> None:
+     checkpoint_path = output / "checkpoint.pt"
+     report = json.loads(report_path.read_text())
+     config = load_experiment_config(args.config)
++    if args.seed is not None:
++        config = replace(config, train=replace(config.train, seed=args.seed))
+     checkpoint = load_training_checkpoint(checkpoint_path)
+     if report.get("status") != "pass" or report.get("strict_reload") != "pass":
+         raise ValueError("world-model report did not pass")
+@@ -136,6 +139,7 @@ def build_parser() -> argparse.ArgumentParser:
+     world_model.add_argument("--config", type=Path, required=True)
+     world_model.add_argument("--minimum-steps", type=int, default=1)
+     world_model.add_argument("--completed-epochs", type=int)
++    world_model.add_argument("--seed", type=int, help="override the seed in the YAML config")
+     world_model.set_defaults(func=_world_model)
+
+     report = commands.add_parser("report")
+diff --git a/sg_jepa/conditioning.py b/sg_jepa/conditioning.py
+new file mode 100644
+index 0000000..1184ce3
+--- /dev/null
++++ b/sg_jepa/conditioning.py
+@@ -0,0 +1,62 @@
++"""Apply controlled gravity inputs for world-model experiments."""
++
++from __future__ import annotations
++
++import torch
++
++GRAVITY_CONDITIONING_MODES = frozenset({"correct", "constant"})
++
++
++def resolve_gravity_action_index(action_dim: int, configured: int | None = None) -> int:
++    """Return the gravity coordinate for a task action vector."""
++
++    action_dim = int(action_dim)
++    if configured is not None:
++        index = int(configured)
++        if index < 0 or index >= action_dim:
++            raise ValueError(
++                f"gravity_action_index={index} is outside action dimension {action_dim}"
++            )
++        return index
++    if action_dim == 3:
++        return 2
++    if action_dim in {1, 4, 6}:
++        return 0
++    raise ValueError(
++        "gravity_action_index is required for an unsupported action dimension: "
++        f"{action_dim}"
++    )
++
++
++def condition_actions(
++    actions: torch.Tensor,
++    *,
++    mode: str,
++    gravity_action_index: int | None = None,
++) -> torch.Tensor:
++    """Return action vectors with either correct or constant gravity conditioning.
++
++    Action vectors are already normalized with training-split statistics. The
++    normalized training mean is therefore zero.
++    """
++
++    if mode not in GRAVITY_CONDITIONING_MODES:
++        raise ValueError(
++            f"gravity conditioning must be one of {sorted(GRAVITY_CONDITIONING_MODES)}, "
++            f"got {mode!r}"
++        )
++    if actions.ndim < 1:
++        raise ValueError(f"actions must have at least one dimension, got {actions.ndim}")
++    if mode == "correct":
++        return actions
++    index = resolve_gravity_action_index(actions.shape[-1], gravity_action_index)
++    conditioned = actions.clone()
++    conditioned[..., index] = 0
++    return conditioned
++
++
++__all__ = [
++    "GRAVITY_CONDITIONING_MODES",
++    "condition_actions",
++    "resolve_gravity_action_index",
++]
+diff --git a/sg_jepa/config.py b/sg_jepa/config.py
+index e7f44cd..a0dbcc3 100644
+--- a/sg_jepa/config.py
++++ b/sg_jepa/config.py
+@@ -8,6 +8,8 @@ from typing import Any, TypeVar
+
+ import yaml
+
++from sg_jepa.conditioning import GRAVITY_CONDITIONING_MODES
++
+
+ @dataclass(frozen=True)
+ class WorldModelConfig:
+@@ -87,6 +89,8 @@ class TrainConfig:
+     checkpoint_every_epochs: int = 1
+     seed: int = 42
+     precision: str = "fp32"
++    gravity_conditioning: str = "correct"
++    gravity_action_index: int | None = None
+
+     def __post_init__(self) -> None:
+         if self.epochs <= 0 or self.batch_size <= 0:
+@@ -111,6 +115,13 @@ class TrainConfig:
+             raise ValueError("max_val_batches must be positive when provided")
+         if self.precision not in {"fp32", "bf16"}:
+             raise ValueError("precision must be fp32 or bf16")
++        if self.gravity_conditioning not in GRAVITY_CONDITIONING_MODES:
++            raise ValueError(
++                "gravity_conditioning must be one of "
++                f"{sorted(GRAVITY_CONDITIONING_MODES)}"
++            )
++        if self.gravity_action_index is not None and self.gravity_action_index < 0:
++            raise ValueError("gravity_action_index must be non-negative")
+
+
+ @dataclass(frozen=True)
+diff --git a/sg_jepa/evaluation/frozen_approach.py b/sg_jepa/evaluation/frozen_approach.py
+index 64c9898..8442726 100644
+--- a/sg_jepa/evaluation/frozen_approach.py
++++ b/sg_jepa/evaluation/frozen_approach.py
+@@ -22,6 +22,7 @@ from sg_jepa.baselines import (
+     strict_load_dino,
+ )
+ from sg_jepa.checkpoints import load_state_dict, sha256_file, strict_load
++from sg_jepa.conditioning import condition_actions
+ from sg_jepa.config import load_experiment_config
+ from sg_jepa.data import open_trajectory_store
+ from sg_jepa.models import build_world_model
+@@ -317,6 +318,8 @@ def run_frozen_approach_evaluation(
+             raise ValueError("native probe dimension differs from model embedding dimension")
+         history = config.model.history_size
+         image_size = config.model.image_size
++        gravity_conditioning = config.train.gravity_conditioning
++        gravity_action_index = config.train.gravity_action_index
+         checkpoint_metadata: dict[str, Any] = {}
+     else:
+         if checkpoint_path.suffix == ".safetensors":
+@@ -329,6 +332,8 @@ def run_frozen_approach_evaluation(
+         model.to(selected_device).eval().requires_grad_(False)
+         history = model.config.history_size
+         image_size = 128
++        gravity_conditioning = "correct"
++        gravity_action_index = None
+         if probe.feature_dim != 2 * model.config.visual_dim:
+             raise ValueError("DINO probe dimension differs from predictor visual dimension")
+         if dinov2_root is None:
+@@ -353,6 +358,11 @@ def run_frozen_approach_evaluation(
+                 device=selected_device,
+                 dtype=torch.float32,
+             )
++            actions = condition_actions(
++                actions,
++                mode=gravity_conditioning,
++                gravity_action_index=gravity_action_index,
++            )
+             if actions.shape != (int(store.lengths[int(store_index)]), 1):
+                 raise ValueError(f"Approach action contract differs: {tuple(actions.shape)}")
+             target = torch.as_tensor(
+diff --git a/sg_jepa/evaluation/state_probe.py b/sg_jepa/evaluation/state_probe.py
+index 5e83097..3da56c1 100644
+--- a/sg_jepa/evaluation/state_probe.py
++++ b/sg_jepa/evaluation/state_probe.py
+@@ -24,6 +24,7 @@ from sg_jepa.baselines import (
+     strict_load_dino,
+ )
+ from sg_jepa.checkpoints import load_state_dict, sha256_file, strict_load
++from sg_jepa.conditioning import condition_actions
+ from sg_jepa.config import load_experiment_config
+ from sg_jepa.data import (
+     ActionStatistics,
+@@ -814,6 +815,8 @@ def run_planar_probe_evaluation(
+         strict_load(model, checkpoint_path)
+         history = experiment.model.history_size
+         image_size = experiment.model.image_size
++        gravity_conditioning = experiment.train.gravity_conditioning
++        gravity_action_index = experiment.train.gravity_action_index
+     else:
+         model, predictor_config = _load_dino_predictor(checkpoint_path, config_path)
+         history = predictor_config.history_size
+@@ -821,6 +824,8 @@ def run_planar_probe_evaluation(
+         if dinov2_root is None:
+             raise ValueError("DINO evaluation requires --dinov2-root")
+         encoder = load_dinov2_encoder(dinov2_root, device=selected_device)
++        gravity_conditioning = "correct"
++        gravity_action_index = None
+     model.to(selected_device).eval().requires_grad_(False)
+     store = open_trajectory_store(dataset_path)
+     statistics, statistics_source = _action_statistics(
+@@ -847,6 +852,11 @@ def run_planar_probe_evaluation(
+             dtype=torch.float32,
+             device=selected_device,
+         )
++        actions = condition_actions(
++            actions,
++            mode=gravity_conditioning,
++            gravity_action_index=gravity_action_index,
++        )
+         if model_kind == "native":
+             true_sequence = _encode_native(
+                 model,
+diff --git a/sg_jepa/training.py b/sg_jepa/training.py
+index 4ff91d4..f5fb8ac 100644
+--- a/sg_jepa/training.py
++++ b/sg_jepa/training.py
+@@ -10,6 +10,7 @@ from typing import Any
+
+ import torch
+
++from sg_jepa.conditioning import condition_actions
+ from sg_jepa.config import ExperimentConfig
+ from sg_jepa.losses import SIGReg, compute_objective
+ from sg_jepa.models import build_world_model
+@@ -113,12 +114,24 @@ def _scheduler(
+     return torch.optim.lr_scheduler.LambdaLR(optimizer, lr_lambda=schedule)
+
+
+-def _move_batch(batch: dict[str, Any], device: torch.device) -> dict[str, Any]:
+-    return {
++def _move_batch(
++    batch: dict[str, Any],
++    device: torch.device,
++    *,
++    gravity_conditioning: str,
++    gravity_action_index: int | None,
++) -> dict[str, Any]:
++    moved = {
+         key: value.to(device, non_blocking=device.type == "cuda")
+         for key, value in batch.items()
+         if torch.is_tensor(value)
+     }
++    moved["action"] = condition_actions(
++        moved["action"],
++        mode=gravity_conditioning,
++        gravity_action_index=gravity_action_index,
++    )
++    return moved
+
+
+ def _autocast(device: torch.device, precision: str):
+@@ -155,7 +168,12 @@ def _validate(
+     for batch_index, batch in enumerate(loader):
+         if config.train.max_val_batches is not None and batch_index >= config.train.max_val_batches:
+             break
+-        tensor_batch = _move_batch(batch, device)
++        tensor_batch = _move_batch(
++            batch,
++            device,
++            gravity_conditioning=config.train.gravity_conditioning,
++            gravity_action_index=config.train.gravity_action_index,
++        )
+         batch_size = int(tensor_batch["pixels"].shape[0])
+         with _autocast(device, config.train.precision):
+             losses = compute_objective(model, tensor_batch, config.objective, sigreg)
+@@ -330,7 +348,12 @@ def run_training(
+             step_totals: dict[str, float] = defaultdict(float)
+             for _ in range(pending):
+                 batch = next(iterator)
+-                tensor_batch = _move_batch(batch, selected_device)
++                tensor_batch = _move_batch(
++                    batch,
++                    selected_device,
++                    gravity_conditioning=config.train.gravity_conditioning,
++                    gravity_action_index=config.train.gravity_action_index,
++                )
+                 with _autocast(selected_device, config.train.precision):
+                     losses = compute_objective(model, tensor_batch, config.objective, sigreg)
+                 loss = losses["loss"]
+diff --git a/tests/test_conditioning.py b/tests/test_conditioning.py
+new file mode 100644
+index 0000000..5690302
+--- /dev/null
++++ b/tests/test_conditioning.py
+@@ -0,0 +1,26 @@
++import pytest
++import torch
++
++from sg_jepa.conditioning import condition_actions, resolve_gravity_action_index
++
++
++def test_square_gravity_defaults_to_last_coordinate() -> None:
++    assert resolve_gravity_action_index(3) == 2
++
++
++def test_constant_conditioning_zeros_normalized_gravity() -> None:
++    actions = torch.tensor([[1.0, 2.0, 3.0], [4.0, 5.0, 6.0]])
++    conditioned = condition_actions(actions, mode="constant")
++    assert torch.equal(conditioned, torch.tensor([[1.0, 2.0, 0.0], [4.0, 5.0, 0.0]]))
++    assert torch.equal(actions, torch.tensor([[1.0, 2.0, 3.0], [4.0, 5.0, 6.0]]))
++
++
++def test_constant_conditioning_accepts_explicit_index() -> None:
++    actions = torch.tensor([[1.0, 2.0, 3.0]])
++    conditioned = condition_actions(actions, mode="constant", gravity_action_index=0)
++    assert torch.equal(conditioned, torch.tensor([[0.0, 2.0, 3.0]]))
++
++
++def test_unknown_conditioning_mode_fails() -> None:
++    with pytest.raises(ValueError, match="gravity conditioning"):
++        condition_actions(torch.zeros(1, 3), mode="shuffled")
+diff --git a/train.py b/train.py
+index 0553e7f..f7718b1 100644
+--- a/train.py
++++ b/train.py
+@@ -20,6 +20,7 @@ def main() -> None:
+     parser.add_argument("--output-dir", type=Path, required=True)
+     parser.add_argument("--device", default="cuda")
+     parser.add_argument("--resume", type=Path)
++    parser.add_argument("--seed", type=int, help="override the seed in the YAML config")
+     parser.add_argument(
+         "--dinov2-root",
+         type=Path,
+@@ -46,8 +47,13 @@ def main() -> None:
+             max_steps=args.max_steps,
+         )
+     else:
++        config = load_experiment_config(args.config)
++        if args.seed is not None:
++            from dataclasses import replace
++
++            config = replace(config, train=replace(config.train, seed=args.seed))
+         report = run_training(
+-            load_experiment_config(args.config),
++            config,
+             args.data,
+             args.output_dir,
+             device=args.device,
++            resume=args.resume,
++            max_steps=args.max_steps,
++        )
+diff --git a/sg_jepa/models/factory.py b/sg_jepa/models/factory.py
+--- a/sg_jepa/models/factory.py
++++ b/sg_jepa/models/factory.py
+@@ -3,6 +3,7 @@
+ from __future__ import annotations
+
++import torch
+ from torch import nn
+
+ from sg_jepa.config import WorldModelConfig
+@@ -27,6 +28,8 @@
+ def build_vit_encoder(config: WorldModelConfig) -> nn.Module:
+     """Reproduce ``stable_pretraining.backbone.utils.vit_hf`` locally."""
+
++    if torch.cuda.is_available():
++        torch.backends.cuda.enable_cudnn_sdp(False)
++
+     try:
+         from transformers import ViTConfig, ViTModel
