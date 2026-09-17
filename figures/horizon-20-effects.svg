@@ -1,36 +1,34 @@
-<svg xmlns="http://www.w3.org/2000/svg" width="980" height="470" viewBox="0 0 980 470" role="img" aria-labelledby="title desc">
+<svg xmlns="http://www.w3.org/2000/svg" width="980" height="520" viewBox="0 0 980 520" role="img" aria-labelledby="title desc">
 <title id="title">Horizon-20 rollout effects</title>
 <desc id="desc">Percentage reduction from one-step to rollout training under correct and constant gravity at horizon 20.</desc>
 <rect width="100%" height="100%" fill="#ffffff"/>
 <text x="490.0" y="32.0" font-family="Arial, sans-serif" font-size="22px" font-weight="500" text-anchor="middle" fill="#1f2937">Horizon-20 rollout effect</text>
-<line x1="90.0" y1="356.0" x2="890.0" y2="356.0" stroke="#e5e7eb" stroke-width="1.0"/>
-<text x="80.0" y="360.0" font-family="Arial, sans-serif" font-size="11px" font-weight="400" text-anchor="end" fill="#1f2937">0%</text>
-<line x1="90.0" y1="286.0" x2="890.0" y2="286.0" stroke="#e5e7eb" stroke-width="1.0"/>
-<text x="80.0" y="290.0" font-family="Arial, sans-serif" font-size="11px" font-weight="400" text-anchor="end" fill="#1f2937">20%</text>
-<line x1="90.0" y1="216.0" x2="890.0" y2="216.0" stroke="#e5e7eb" stroke-width="1.0"/>
-<text x="80.0" y="220.0" font-family="Arial, sans-serif" font-size="11px" font-weight="400" text-anchor="end" fill="#1f2937">40%</text>
-<line x1="90.0" y1="146.0" x2="890.0" y2="146.0" stroke="#e5e7eb" stroke-width="1.0"/>
-<text x="80.0" y="150.0" font-family="Arial, sans-serif" font-size="11px" font-weight="400" text-anchor="end" fill="#1f2937">60%</text>
+<line x1="90.0" y1="370.0" x2="890.0" y2="370.0" stroke="#e5e7eb" stroke-width="1.0"/>
+<text x="80.0" y="374.0" font-family="Arial, sans-serif" font-size="13px" font-weight="400" text-anchor="end" fill="#1f2937">0%</text>
+<line x1="90.0" y1="296.5" x2="890.0" y2="296.5" stroke="#e5e7eb" stroke-width="1.0"/>
+<text x="80.0" y="300.5" font-family="Arial, sans-serif" font-size="13px" font-weight="400" text-anchor="end" fill="#1f2937">20%</text>
+<line x1="90.0" y1="223.0" x2="890.0" y2="223.0" stroke="#e5e7eb" stroke-width="1.0"/>
+<text x="80.0" y="227.0" font-family="Arial, sans-serif" font-size="13px" font-weight="400" text-anchor="end" fill="#1f2937">40%</text>
+<line x1="90.0" y1="149.5" x2="890.0" y2="149.5" stroke="#e5e7eb" stroke-width="1.0"/>
+<text x="80.0" y="153.5" font-family="Arial, sans-serif" font-size="13px" font-weight="400" text-anchor="end" fill="#1f2937">60%</text>
 <line x1="90.0" y1="76.0" x2="890.0" y2="76.0" stroke="#e5e7eb" stroke-width="1.0"/>
-<text x="80.0" y="80.0" font-family="Arial, sans-serif" font-size="11px" font-weight="400" text-anchor="end" fill="#1f2937">80%</text>
-<line x1="90.0" y1="76.0" x2="90.0" y2="356.0" stroke="#6b7280" stroke-width="1.2"/>
-<line x1="90.0" y1="356.0" x2="890.0" y2="356.0" stroke="#6b7280" stroke-width="1.2"/>
-<rect x="256.0" y="113.7" width="72" height="242.3" fill="#16a34a" opacity="0.88"/>
-<text x="292.0" y="104.7" font-family="Arial, sans-serif" font-size="13px" font-weight="500" text-anchor="middle" fill="#1f2937">69%</text>
-<text x="292.0" y="378.0" font-family="Arial, sans-serif" font-size="11px" font-weight="400" text-anchor="middle" fill="#1f2937">MSE</text>
-<rect x="348.0" y="101.1" width="72" height="254.9" fill="#16a34a" opacity="0.88"/>
-<text x="384.0" y="92.1" font-family="Arial, sans-serif" font-size="13px" font-weight="500" text-anchor="middle" fill="#1f2937">73%</text>
-<text x="384.0" y="378.0" font-family="Arial, sans-serif" font-size="11px" font-weight="400" text-anchor="middle" fill="#1f2937">position</text>
-<text x="338.0" y="410.0" font-family="Arial, sans-serif" font-size="13px" font-weight="500" text-anchor="middle" fill="#1f2937">Correct gravity</text>
-<rect x="560.0" y="335.3" width="72" height="20.7" fill="#9333ea" opacity="0.88"/>
-<text x="596.0" y="326.3" font-family="Arial, sans-serif" font-size="13px" font-weight="500" text-anchor="middle" fill="#1f2937">6%</text>
-<text x="596.0" y="378.0" font-family="Arial, sans-serif" font-size="11px" font-weight="400" text-anchor="middle" fill="#1f2937">MSE</text>
-<rect x="652.0" y="342.2" width="72" height="13.8" fill="#9333ea" opacity="0.88"/>
-<text x="688.0" y="333.2" font-family="Arial, sans-serif" font-size="13px" font-weight="500" text-anchor="middle" fill="#1f2937">4%</text>
-<text x="688.0" y="378.0" font-family="Arial, sans-serif" font-size="11px" font-weight="400" text-anchor="middle" fill="#1f2937">position</text>
-<text x="642.0" y="410.0" font-family="Arial, sans-serif" font-size="13px" font-weight="500" text-anchor="middle" fill="#1f2937">Constant gravity</text>
-<text x="490.0" y="436.0" font-family="Arial, sans-serif" font-size="12px" font-weight="400" text-anchor="middle" fill="#1f2937">relative reduction from one-step to rollout training</text>
-<text x="34.0" y="216.0" font-family="Arial, sans-serif" font-size="11px" font-weight="400" text-anchor="middle" fill="#1f2937">reduction</text>
-<text x="650.0" y="412.0" font-family="Arial, sans-serif" font-size="14px" font-weight="500" text-anchor="start" fill="#1f2937">The rollout gain is much larger when gravity varies.</text>
-<text x="650.0" y="435.0" font-family="Arial, sans-serif" font-size="12px" font-weight="400" text-anchor="start" fill="#1f2937">Correct gravity: 69% MSE, 73% position. Constant gravity: 6%, 4%.</text>
+<text x="80.0" y="80.0" font-family="Arial, sans-serif" font-size="13px" font-weight="400" text-anchor="end" fill="#1f2937">80%</text>
+<line x1="90.0" y1="76.0" x2="90.0" y2="370.0" stroke="#6b7280" stroke-width="1.2"/>
+<line x1="90.0" y1="370.0" x2="890.0" y2="370.0" stroke="#6b7280" stroke-width="1.2"/>
+<rect x="256.0" y="115.6" width="72" height="254.4" fill="#16a34a" opacity="0.88"/>
+<text x="292.0" y="105.6" font-family="Arial, sans-serif" font-size="14px" font-weight="500" text-anchor="middle" fill="#1f2937">69%</text>
+<text x="292.0" y="395.0" font-family="Arial, sans-serif" font-size="13px" font-weight="400" text-anchor="middle" fill="#1f2937">MSE</text>
+<rect x="348.0" y="102.4" width="72" height="267.6" fill="#16a34a" opacity="0.88"/>
+<text x="384.0" y="92.4" font-family="Arial, sans-serif" font-size="14px" font-weight="500" text-anchor="middle" fill="#1f2937">73%</text>
+<text x="384.0" y="395.0" font-family="Arial, sans-serif" font-size="13px" font-weight="400" text-anchor="middle" fill="#1f2937">position</text>
+<text x="338.0" y="432.0" font-family="Arial, sans-serif" font-size="15px" font-weight="500" text-anchor="middle" fill="#1f2937">Correct gravity</text>
+<rect x="560.0" y="348.3" width="72" height="21.7" fill="#9333ea" opacity="0.88"/>
+<text x="596.0" y="338.3" font-family="Arial, sans-serif" font-size="14px" font-weight="500" text-anchor="middle" fill="#1f2937">6%</text>
+<text x="596.0" y="395.0" font-family="Arial, sans-serif" font-size="13px" font-weight="400" text-anchor="middle" fill="#1f2937">MSE</text>
+<rect x="652.0" y="355.5" width="72" height="14.5" fill="#9333ea" opacity="0.88"/>
+<text x="688.0" y="345.5" font-family="Arial, sans-serif" font-size="14px" font-weight="500" text-anchor="middle" fill="#1f2937">4%</text>
+<text x="688.0" y="395.0" font-family="Arial, sans-serif" font-size="13px" font-weight="400" text-anchor="middle" fill="#1f2937">position</text>
+<text x="642.0" y="432.0" font-family="Arial, sans-serif" font-size="15px" font-weight="500" text-anchor="middle" fill="#1f2937">Constant gravity</text>
+<text x="490.0" y="489.0" font-family="Arial, sans-serif" font-size="14px" font-weight="400" text-anchor="middle" fill="#1f2937">relative reduction from one-step to rollout training</text>
+<text x="34.0" y="223.0" font-family="Arial, sans-serif" font-size="14px" font-weight="400" text-anchor="middle" fill="#1f2937">reduction</text>
 </svg>

@@ -74,7 +74,7 @@ def line_panel(
         horizon: left + plot_width * i / (len(HORIZONS) - 1)
         for i, horizon in enumerate(HORIZONS)
     }
-    parts = [text(x + width / 2, y + 20, title, size=16, anchor="middle", weight="500")]
+    parts = [text(x + width / 2, y + 20, title, size=18, anchor="middle", weight="500")]
     parts.append(line(left, top, left, bottom, "#6b7280", 1.2))
     parts.append(line(left, bottom, right, bottom, "#6b7280", 1.2))
     ticks = 4
@@ -82,12 +82,12 @@ def line_panel(
         value = ymax * i / ticks
         y_tick = bottom - plot_height * i / ticks
         parts.append(line(left, y_tick, right, y_tick, "#e5e7eb", 1.0))
-        parts.append(text(left - 9, y_tick + 4, f"{value:.1f}", size=11, anchor="end"))
+        parts.append(text(left - 9, y_tick + 4, f"{value:.1f}", size=13, anchor="end"))
     for horizon, x_tick in x_positions.items():
         parts.append(line(x_tick, bottom, x_tick, bottom + 5, "#6b7280", 1.0))
-        parts.append(text(x_tick, bottom + 22, str(horizon), size=11, anchor="middle"))
-    parts.append(text(x + 14, top + plot_height / 2, "error", size=11, anchor="middle"))
-    parts.append(text(x + width / 2, y + height - 8, "prediction horizon", size=11, anchor="middle"))
+        parts.append(text(x_tick, bottom + 24, str(horizon), size=13, anchor="middle"))
+    parts.append(text(x + 14, top + plot_height / 2, "error", size=14, anchor="middle"))
+    parts.append(text(x + width / 2, y + height - 7, "prediction horizon", size=14, anchor="middle"))
 
     by_series = defaultdict(dict)
     for row in rows:
@@ -128,7 +128,7 @@ def make_error_figure(rows: list[dict[str, float | str]]) -> None:
         dash = "7 5" if style == "dash" else None
         parts.append(line(legend_x, current_y - 5, legend_x + 28, current_y - 5, color, 2.5, dash))
         parts.append(circle(legend_x + 14, current_y - 5, color))
-        parts.append(text(legend_x + 40, current_y, label, size=12))
+        parts.append(text(legend_x + 40, current_y, label, size=14))
     parts.append("</svg>")
     (FIGURES / "autoregressive-error.svg").write_text("\n".join(parts) + "\n")
 
@@ -136,7 +136,7 @@ def make_error_figure(rows: list[dict[str, float | str]]) -> None:
 def make_effects_figure(rows: list[dict[str, float | str]]) -> None:
     by_key = {(row["gravity_condition"], row["training_objective"]): row for row in rows if row["horizon"] == 20}
     metrics = [("target_mse", "MSE reduction", "percent"), ("position_l2", "Position reduction", "percent")]
-    width, height = 980, 470
+    width, height = 980, 520
     parts = [
         f'<svg xmlns="http://www.w3.org/2000/svg" width="{width}" height="{height}" viewBox="0 0 {width} {height}" role="img" aria-labelledby="title desc">',
         '<title id="title">Horizon-20 rollout effects</title>',
@@ -144,14 +144,14 @@ def make_effects_figure(rows: list[dict[str, float | str]]) -> None:
         '<rect width="100%" height="100%" fill="#ffffff"/>',
         text(width / 2, 32, "Horizon-20 rollout effect", size=22, anchor="middle", weight="500"),
     ]
-    chart_left, chart_top, chart_width, chart_height = 90, 76, 800, 280
+    chart_left, chart_top, chart_width, chart_height = 90, 76, 800, 294
     chart_bottom = chart_top + chart_height
     max_value = 80
     for i in range(5):
         value = i * 20
         y_tick = chart_bottom - chart_height * value / max_value
         parts.append(line(chart_left, y_tick, chart_left + chart_width, y_tick, "#e5e7eb", 1.0))
-        parts.append(text(chart_left - 10, y_tick + 4, f"{value}%", size=11, anchor="end"))
+        parts.append(text(chart_left - 10, y_tick + 4, f"{value}%", size=13, anchor="end"))
     parts.append(line(chart_left, chart_top, chart_left, chart_bottom, "#6b7280", 1.2))
     parts.append(line(chart_left, chart_bottom, chart_left + chart_width, chart_bottom, "#6b7280", 1.2))
     groups = [("Correct gravity", "correct", "#16a34a"), ("Constant gravity", "constant", "#9333ea")]
@@ -167,13 +167,11 @@ def make_effects_figure(rows: list[dict[str, float | str]]) -> None:
             bar_h = chart_height * reduction / max_value
             bar_y = chart_bottom - bar_h
             parts.append(f'<rect x="{bar_x:.1f}" y="{bar_y:.1f}" width="{bar_width}" height="{bar_h:.1f}" fill="{color}" opacity="0.88"/>')
-            parts.append(text(bar_x + bar_width / 2, bar_y - 9, f"{reduction:.0f}%", size=13, anchor="middle", weight="500"))
-            parts.append(text(bar_x + bar_width / 2, chart_bottom + 22, "MSE" if metric == "target_mse" else "position", size=11, anchor="middle"))
-        parts.append(text(center, chart_bottom + 54, group_label, size=13, anchor="middle", weight="500"))
-    parts.append(text(chart_left + chart_width / 2, height - 34, "relative reduction from one-step to rollout training", size=12, anchor="middle"))
-    parts.append(text(chart_left - 56, chart_top + chart_height / 2, "reduction", size=11, anchor="middle"))
-    parts.append(text(650, 412, "The rollout gain is much larger when gravity varies.", size=14, weight="500"))
-    parts.append(text(650, 435, "Correct gravity: 69% MSE, 73% position. Constant gravity: 6%, 4%.", size=12))
+            parts.append(text(bar_x + bar_width / 2, bar_y - 10, f"{reduction:.0f}%", size=14, anchor="middle", weight="500"))
+            parts.append(text(bar_x + bar_width / 2, chart_bottom + 25, "MSE" if metric == "target_mse" else "position", size=13, anchor="middle"))
+        parts.append(text(center, chart_bottom + 62, group_label, size=15, anchor="middle", weight="500"))
+    parts.append(text(chart_left + chart_width / 2, height - 31, "relative reduction from one-step to rollout training", size=14, anchor="middle"))
+    parts.append(text(chart_left - 56, chart_top + chart_height / 2, "reduction", size=14, anchor="middle"))
     parts.append("</svg>")
     (FIGURES / "horizon-20-effects.svg").write_text("\n".join(parts) + "\n")
 
