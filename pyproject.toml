@@ -30,6 +30,9 @@ dependencies = [
 ]
 
 [project.optional-dependencies]
+analysis = [
+  "matplotlib>=3.8,<4",
+]
 data = [
   "h5py>=3.12",
   "mujoco>=3.3,<4",

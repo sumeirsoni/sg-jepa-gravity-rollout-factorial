@@ -139,7 +139,7 @@ official SG-JEPA release. You do not need to apply it to run this checkout.
   probe, evaluation, and generic submission entrypoints.
 - `analysis/results.csv` contains the plotted summary values.
 - `analysis/plot_results.py` regenerates the figures.
-- `figures/` contains the SVG figures embedded above.
+- `figures/` contains the SVG figures embedded above, plus PDF and PNG exports.
 - `upstream.patch` records the experiment changes relative to the upstream
   source.
 

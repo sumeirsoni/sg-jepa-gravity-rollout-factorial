@@ -4,11 +4,12 @@
 factorial cells. Each row reports normalized target MSE and position L2 at one
 evaluation horizon.
 
-Regenerate the figures from the CSV with:
+Regenerate the figures from the CSV with Matplotlib:
 
 ```bash
-python analysis/plot_results.py
+uv sync --extra analysis
+uv run --extra analysis python analysis/plot_results.py
 ```
 
-The script uses only the Python standard library and writes the two SVG files
-under `figures/`.
+The script writes SVG and PDF vector figures plus high-resolution PNG previews
+under `figures/`. The SVG files are embedded in the main README.
